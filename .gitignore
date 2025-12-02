@@ -1,0 +1,11 @@
+# Ignorar arquivos compilados da classe Java
+*.class
+
+# Ignorar pastas de builds comuns de IDEs
+bin/
+out/
+target/
+.idea/
+.vscode/
+*.iml
+.DS_Store

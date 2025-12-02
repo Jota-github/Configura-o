@@ -1,0 +1,11 @@
+# Diário de Prompts - IA
+
+## Passo 1: Estruturação
+**Prompt utilizado:**
+"chat vou mandar para voce o problema, quero que primeiro voce faça as pastas necessarias para o projeto, e depois vamos para os codigos ok? lembrando passo a passo"
+
+**Resposta da IA:**
+A IA sugeriu a criação de uma estrutura padrão com pastas `src` e `docs`, além de um `.gitignore` específico para Java.
+
+**Ajustes realizados:**
+Criei a estrutura conforme sugerido.
