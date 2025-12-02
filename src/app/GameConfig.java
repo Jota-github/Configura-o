@@ -1,6 +1,15 @@
 package app;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class GameConfig {
+    // 1. Atributo estático para guardar a ÚNICA instância da classe
+    private static GameConfig instance;
+
+    // Atributos de configuração
     private String appId;
     private String userName;
     private String language;
@@ -17,74 +26,80 @@ public class GameConfig {
     private boolean waitForExit;
     private boolean noOperation;
 
-    // Construtor vazio (por enquanto)
-    public GameConfig() {
+    // 2. Construtor PRIVADO: Ninguém fora dessa classe pode dar "new GameConfig()"
+    // A leitura do arquivo acontece aqui, apenas uma vez.
+    private GameConfig() {
+        Path path = Paths.get("config.txt"); // Busca o arquivo na raiz do projeto
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Pula linhas vazias ou sem "="
+                if (line.trim().isEmpty() || !line.contains("=")) continue;
+
+                // Divide a linha no primeiro "=" encontrado
+                String[] parts = line.split("=", 2); 
+                String key = parts[0].trim();
+                String value = parts.length > 1 ? parts[1].trim() : "";
+
+                // Preenche os campos baseado na chave lida
+                switch (key) {
+                    case "AppId": this.appId = value; break;
+                    case "UserName": this.userName = value; break;
+                    case "Language": this.language = value; break;
+                    case "Offline": this.offline = "1".equals(value); break; // Converte "1" para true
+                    case "AutoDLC": this.autoDlc = "1".equals(value); break;
+                    case "BuildId": this.buildId = value; break;
+                    case "DLCName": this.dlcName = value; break;
+                    case "UpdateDB": this.updateDb = "1".equals(value); break;
+                    case "Signature": this.signature = value; break;
+                    case "WindowInfo": this.windowInfo = value; break;
+                    case "LVWindowInfo": this.lvWindowInfo = value; break;
+                    case "ApplicationPath": this.applicationPath = value; break;
+                    case "WorkingDirectory": this.workingDirectory = value; break;
+                    case "WaitForExit": this.waitForExit = "1".equals(value); break;
+                    case "NoOperation": this.noOperation = "1".equals(value); break;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao ler config.txt: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    // Getters e Setters
+    // 3. Método Público Estático: O único jeito de acessar o objeto
+    public static GameConfig getInstance() {
+        if (instance == null) {
+            instance = new GameConfig(); // Cria a instância apenas se ela ainda não existir
+        }
+        return instance;
+    }
+
+    // Getters
     public String getAppId() { return appId; }
-    public void setAppId(String appId) { this.appId = appId; }
-
     public String getUserName() { return userName; }
-    public void setUserName(String userName) { this.userName = userName; }
-
     public String getLanguage() { return language; }
-    public void setLanguage(String language) { this.language = language; }
-
     public boolean isOffline() { return offline; }
-    public void setOffline(boolean offline) { this.offline = offline; }
-
     public boolean isAutoDlc() { return autoDlc; }
-    public void setAutoDlc(boolean autoDlc) { this.autoDlc = autoDlc; }
-
     public String getBuildId() { return buildId; }
-    public void setBuildId(String buildId) { this.buildId = buildId; }
-
     public String getDlcName() { return dlcName; }
-    public void setDlcName(String dlcName) { this.dlcName = dlcName; }
-
     public boolean isUpdateDb() { return updateDb; }
-    public void setUpdateDb(boolean updateDb) { this.updateDb = updateDb; }
-
     public String getSignature() { return signature; }
-    public void setSignature(String signature) { this.signature = signature; }
-
     public String getWindowInfo() { return windowInfo; }
-    public void setWindowInfo(String windowInfo) { this.windowInfo = windowInfo; }
-
     public String getLvWindowInfo() { return lvWindowInfo; }
-    public void setLvWindowInfo(String lvWindowInfo) { this.lvWindowInfo = lvWindowInfo; }
-
     public String getApplicationPath() { return applicationPath; }
-    public void setApplicationPath(String applicationPath) { this.applicationPath = applicationPath; }
-
     public String getWorkingDirectory() { return workingDirectory; }
-    public void setWorkingDirectory(String workingDirectory) { this.workingDirectory = workingDirectory; }
-
     public boolean isWaitForExit() { return waitForExit; }
-    public void setWaitForExit(boolean waitForExit) { this.waitForExit = waitForExit; }
-
     public boolean isNoOperation() { return noOperation; }
-    public void setNoOperation(boolean noOperation) { this.noOperation = noOperation; }
 
     @Override
     public String toString() {
-        return "GameConfig{" +
-                "appId='" + appId + '\'' +
-                ", userName='" + userName + '\'' +
-                ", language='" + language + '\'' +
-                ", offline=" + offline +
-                ", autoDlc=" + autoDlc +
-                ", buildId='" + buildId + '\'' +
-                ", dlcName='" + dlcName + '\'' +
-                ", updateDb=" + updateDb +
-                ", signature='" + signature + '\'' +
-                ", windowInfo='" + windowInfo + '\'' +
-                ", lvWindowInfo='" + lvWindowInfo + '\'' +
-                ", applicationPath='" + applicationPath + '\'' +
-                ", workingDirectory='" + workingDirectory + '\'' +
-                ", waitForExit=" + waitForExit +
-                ", noOperation=" + noOperation +
-                '}';
+        return "GameConfig Carregado:\n" +
+                " - AppId: " + appId + "\n" +
+                " - UserName: " + userName + "\n" +
+                " - Language: " + language + "\n" +
+                " - Offline: " + offline + "\n" +
+                " - DLCName: " + dlcName + "\n" +
+                " - ApplicationPath: " + applicationPath;
     }
 }
